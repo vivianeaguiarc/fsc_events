@@ -1,16 +1,16 @@
 {
   "compilerOptions": {
-    "target": "es2024",
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "lib": ["ES2024", "DOM", "esnext"], // quais recursos usar
+    "target": "ES2024",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2024"],
     "types": ["node", "vitest/globals"],
     "outDir": "dist",
     "rootDir": "src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "moduleDetection": "force",
+    "moduleDetection": "force"
   },
   "include": ["src"]
 }
