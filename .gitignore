@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Runtime
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Build
+dist/
+build/
+out/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Caches
+.npm
+.eslintcache
+.node_repl_history
+*.tsbuildinfo
+
+# Optional package managers
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.swp
+*.swo
