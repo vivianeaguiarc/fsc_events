@@ -1,1 +1,2 @@
-console.log("Hello, TypeScript!");
+const name = "John Doe";
+console.log(name);

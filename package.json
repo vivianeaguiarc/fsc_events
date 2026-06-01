@@ -6,12 +6,23 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/node": "^24.12.4",
-    "typescript": "^5.8.3"
+    "eslint": "^10.4.1",
+    "globals": "^17.6.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.60.0"
+  },
+  "dependencies": {
+    "eslint-plugin-simple-import-sort": "12.1.1"
   }
 }
