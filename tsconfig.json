@@ -4,13 +4,13 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "lib": ["ES2024", "DOM", "esnext"], // quais recursos usar
-    "types": ["node"],
+    "types": ["node", "vitest/globals"],
     "outDir": "dist",
     "rootDir": "src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "moduleDetection": "force"
+    "moduleDetection": "force",
   },
   "include": ["src"]
 }
