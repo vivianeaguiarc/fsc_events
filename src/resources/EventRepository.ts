@@ -20,6 +20,8 @@ export class EventRepositoryDrizzle implements EventRepository {
     const [output] = await db
       .insert(schema.eventsTable)
       .values({
+        // @ts-expect-error - Drizzle espera snake_case, mas a interface é camelCase
+        id: input.id,
         date: input.date,
         latitude: input.latitude,
         longitude: input.longitude,

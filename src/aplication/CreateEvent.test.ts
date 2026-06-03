@@ -28,6 +28,7 @@ describe('POST /events', () => {
 
   test('Deve criar um evento com sucesso', async () => {
     const input = {
+      id: crypto.randomUUID(),
       name: 'Evento de Teste',
       ticketPriceInCents: 5000,
       latitude: 40.7128,
@@ -40,10 +41,13 @@ describe('POST /events', () => {
 
     expect(output.name).toBe(input.name)
     expect(output.ticketPriceInCents).toBe(input.ticketPriceInCents)
+    expect(output.id).toBeDefined()
+    expect(typeof output.id).toBe('string')
   })
 
   test('Deve retornar erro se o ownerId não for um UUID válido', async () => {
     const input = {
+      id: crypto.randomUUID(),
       name: 'Evento de Teste',
       ticketPriceInCents: 5000,
       latitude: 40.7128,
@@ -59,6 +63,7 @@ describe('POST /events', () => {
 
   test('Deve retornar erro se o ticketPriceInCents for negativo', async () => {
     const input = {
+      id: crypto.randomUUID(),
       name: 'Evento de Teste',
       ticketPriceInCents: -5000,
       latitude: 40.7128,
@@ -76,6 +81,7 @@ describe('POST /events', () => {
 
   test('Deve retornar erro se a latitude for inválida', async () => {
     const input = {
+      id: crypto.randomUUID(),
       name: 'Evento de Teste',
       ticketPriceInCents: 5000,
       latitude: -91,
@@ -91,6 +97,7 @@ describe('POST /events', () => {
 
   test('Deve retornar erro se a longitude for inválida', async () => {
     const input = {
+      id: crypto.randomUUID(),
       name: 'Evento de Teste',
       ticketPriceInCents: 5000,
       latitude: 40.7128,
@@ -108,6 +115,7 @@ describe('POST /events', () => {
 
   test('Deve retornar erro se a data for no passado', async () => {
     const input = {
+      id: crypto.randomUUID(),
       name: 'Evento de Teste',
       ticketPriceInCents: 5000,
       latitude: 40.7128,
