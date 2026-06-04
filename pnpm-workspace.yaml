@@ -1,2 +1,5 @@
 allowBuilds:
+  cpu-features: true
   esbuild: false
+  protobufjs: true
+  ssh2: true

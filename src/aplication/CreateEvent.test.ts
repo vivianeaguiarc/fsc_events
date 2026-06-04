@@ -1,11 +1,31 @@
+import { StartedPostgreSqlContainer } from '@testcontainers/postgresql'
+
 import { db } from '../db/client'
+import { eventsTable } from '../db/schema'
+import { startPostgresTestDb } from '../db/test-db'
 import { EventRepositoryDrizzle } from '../resources/EventRepository'
 import { CreateEvent } from './CreateEvent'
 
 describe('POST /events', () => {
-  const createEvent = new CreateEvent(new EventRepositoryDrizzle(db))
+  let database: typeof db
+  let container: StartedPostgreSqlContainer
+
+  beforeAll(async () => {
+    const testDatabase = await startPostgresTestDb()
+    database = testDatabase.db
+    container = testDatabase.container
+  })
+  beforeEach(async () => {
+    await database.delete(eventsTable).execute()
+  })
+
+  afterAll(async () => {
+    await database.$client.end()
+    await container.stop()
+  })
 
   test('Deve criar um evento com sucesso', async () => {
+    const createEvent = new CreateEvent(new EventRepositoryDrizzle(database))
     const input = {
       name: 'Evento de Teste',
       ticketPriceInCents: 5000,
@@ -27,6 +47,7 @@ describe('POST /events', () => {
   })
 
   test('Deve retornar erro se o ownerId não for um UUID válido', async () => {
+    const createEvent = new CreateEvent(new EventRepositoryDrizzle(database))
     const input = {
       name: 'Evento de Teste',
       ticketPriceInCents: 5000,
@@ -42,6 +63,7 @@ describe('POST /events', () => {
   })
 
   test('Deve retornar erro se o ticketPriceInCents for negativo', async () => {
+    const createEvent = new CreateEvent(new EventRepositoryDrizzle(database))
     const input = {
       name: 'Evento de Teste',
       ticketPriceInCents: -5000,
@@ -59,6 +81,7 @@ describe('POST /events', () => {
   })
 
   test('Deve retornar erro se a latitude for inválida', async () => {
+    const createEvent = new CreateEvent(new EventRepositoryDrizzle(database))
     const input = {
       name: 'Evento de Teste',
       ticketPriceInCents: 5000,
@@ -74,6 +97,7 @@ describe('POST /events', () => {
   })
 
   test('Deve retornar erro se a longitude for inválida', async () => {
+    const createEvent = new CreateEvent(new EventRepositoryDrizzle(database))
     const input = {
       name: 'Evento de Teste',
       ticketPriceInCents: 5000,
@@ -91,6 +115,7 @@ describe('POST /events', () => {
   })
 
   test('Deve retornar erro se a data for no passado', async () => {
+    const createEvent = new CreateEvent(new EventRepositoryDrizzle(database))
     const input = {
       name: 'Evento de Teste',
       ticketPriceInCents: 5000,
@@ -106,6 +131,7 @@ describe('POST /events', () => {
   })
 
   test('Deve lançar um erro se já existir um evento na mesma data e localização', async () => {
+    const createEvent = new CreateEvent(new EventRepositoryDrizzle(database))
     const date = new Date(new Date().setHours(new Date().getHours() + 2))
 
     const input = {
