@@ -1,34 +1,11 @@
-import { CreateEvent, type EventRepository } from './CreateEvent'
-
-type EventInput = {
-  name: string
-  ownerId: string
-  ticketPriceInCents: number
-  latitude: number
-  longitude: number
-  date: Date
-}
-
-type EventOutput = EventInput & {
-  id: string
-}
+import { EventRepositoryDrizzle } from '../resources/EventRepository'
+import { CreateEvent } from './CreateEvent'
 
 describe('POST /events', () => {
-  class EventInMemoryRepository implements EventRepository {
-    private events: EventOutput[] = []
-
-    async create(input: EventInput): Promise<EventOutput> {
-      const event = { id: crypto.randomUUID(), ...input }
-      this.events.push(event)
-      return event
-    }
-  }
-
-  const createEvent = new CreateEvent(new EventInMemoryRepository())
+  const createEvent = new CreateEvent(new EventRepositoryDrizzle())
 
   test('Deve criar um evento com sucesso', async () => {
     const input = {
-      id: crypto.randomUUID(),
       name: 'Evento de Teste',
       ticketPriceInCents: 5000,
       latitude: 40.7128,
@@ -43,11 +20,13 @@ describe('POST /events', () => {
     expect(output.ticketPriceInCents).toBe(input.ticketPriceInCents)
     expect(output.id).toBeDefined()
     expect(typeof output.id).toBe('string')
+    expect(output.latitude).toBe(input.latitude)
+    expect(output.longitude).toBe(input.longitude)
+    expect(new Date(output.date)).toEqual(input.date)
   })
 
   test('Deve retornar erro se o ownerId não for um UUID válido', async () => {
     const input = {
-      id: crypto.randomUUID(),
       name: 'Evento de Teste',
       ticketPriceInCents: 5000,
       latitude: 40.7128,
@@ -63,7 +42,6 @@ describe('POST /events', () => {
 
   test('Deve retornar erro se o ticketPriceInCents for negativo', async () => {
     const input = {
-      id: crypto.randomUUID(),
       name: 'Evento de Teste',
       ticketPriceInCents: -5000,
       latitude: 40.7128,
@@ -81,7 +59,6 @@ describe('POST /events', () => {
 
   test('Deve retornar erro se a latitude for inválida', async () => {
     const input = {
-      id: crypto.randomUUID(),
       name: 'Evento de Teste',
       ticketPriceInCents: 5000,
       latitude: -91,
@@ -97,7 +74,6 @@ describe('POST /events', () => {
 
   test('Deve retornar erro se a longitude for inválida', async () => {
     const input = {
-      id: crypto.randomUUID(),
       name: 'Evento de Teste',
       ticketPriceInCents: 5000,
       latitude: 40.7128,
@@ -115,7 +91,6 @@ describe('POST /events', () => {
 
   test('Deve retornar erro se a data for no passado', async () => {
     const input = {
-      id: crypto.randomUUID(),
       name: 'Evento de Teste',
       ticketPriceInCents: 5000,
       latitude: 40.7128,
@@ -127,5 +102,29 @@ describe('POST /events', () => {
     const output = createEvent.execute(input)
 
     await expect(output).rejects.toThrow('date must be in the future')
+  })
+
+  test('Deve lançar um erro se já existir um evento na mesma data e localização', async () => {
+    const date = new Date(new Date().setHours(new Date().getHours() + 2))
+
+    const input = {
+      name: 'Evento de Teste',
+      ticketPriceInCents: 5000,
+      latitude: -90,
+      longitude: -100,
+      date,
+      ownerId: crypto.randomUUID(),
+    }
+
+    const output = await createEvent.execute(input)
+
+    expect(output.name).toBe(input.name)
+    expect(output.ticketPriceInCents).toBe(input.ticketPriceInCents)
+
+    const output2 = createEvent.execute(input)
+
+    await expect(output2).rejects.toThrow(
+      'An event already exists at the same date and location'
+    )
   })
 })

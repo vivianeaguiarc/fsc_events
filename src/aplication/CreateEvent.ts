@@ -12,14 +12,15 @@ interface Input {
 // Ports
 export interface EventRepository {
   create: (input: OnSiteEvent) => Promise<OnSiteEvent>
+  getByDateLatAndLong: (params: {
+    date: Date
+    latitude: number
+    longitude: number
+  }) => Promise<OnSiteEvent | null>
 }
 
 export class CreateEvent {
-  eventRepository: EventRepository
-
-  constructor(eventRepository: EventRepository) {
-    this.eventRepository = eventRepository
-  }
+  constructor(private readonly eventRepository: EventRepository) {}
   async execute(input: Input) {
     const { name, ticketPriceInCents, latitude, longitude, date, ownerId } =
       input
@@ -46,6 +47,14 @@ export class CreateEvent {
       throw new Error('date must be in the future')
     }
     // nao posso criar um eventona mesma data (dia e horário), latitude e longitude)
+    const existentEvent = await this.eventRepository.getByDateLatAndLong({
+      date,
+      latitude,
+      longitude,
+    })
+    if (existentEvent) {
+      throw new Error('An event already exists at the same date and location')
+    }
     const event = await this.eventRepository.create({
       id: crypto.randomUUID(),
       name,

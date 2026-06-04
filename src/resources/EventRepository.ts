@@ -1,5 +1,6 @@
 import 'dotenv/config'
 
+import { and, eq } from 'drizzle-orm'
 import { drizzle } from 'drizzle-orm/node-postgres'
 
 import { OnSiteEvent } from '../aplication/entities/OnSiteEvent'
@@ -16,6 +17,34 @@ export interface EventRepository {
 }
 // Adapter
 export class EventRepositoryDrizzle implements EventRepository {
+  async getByDateLatAndLong(params: {
+    date: Date
+    latitude: number
+    longitude: number
+  }): Promise<OnSiteEvent | null> {
+    const output = await db.query.eventsTable.findFirst({
+      where: and(
+        eq(schema.eventsTable.date, params.date),
+        eq(schema.eventsTable.latitude, params.latitude.toString()),
+        eq(schema.eventsTable.longitude, params.longitude.toString())
+      ),
+    })
+
+    if (!output) {
+      return null
+    }
+
+    return {
+      date: output.date,
+      id: output.id,
+      latitude: Number(output.latitude),
+      longitude: Number(output.longitude),
+      name: output.name,
+      ownerId: output.owner_id,
+      ticketPriceInCents: output.ticket_price_in_cents,
+    }
+  }
+
   async create(input: OnSiteEvent) {
     const [output] = await db
       .insert(schema.eventsTable)
