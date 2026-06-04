@@ -57,6 +57,8 @@
     "drizzle-orm": "0.44.3",
     "eslint-plugin-simple-import-sort": "12.1.1",
     "fastify": "5.5.0",
-    "pg": "8.16.3"
+    "fastify-type-provider-zod": "5.0.3",
+    "pg": "8.16.3",
+    "zod": "4.0.17"
   }
 }
