@@ -3,22 +3,21 @@ import { and, eq } from 'drizzle-orm'
 import { OnSiteEvent } from '../aplication/entities/OnSiteEvent'
 import { db } from '../db/client'
 import * as schema from '../db/schema'
-
-if (!process.env.DATABASE_URL) {
-  throw new Error('DATABASE_URL is not defined in environment variables')
-}
 export interface EventRepository {
   create(input: OnSiteEvent): Promise<OnSiteEvent>
 }
 // Adapter
 export class EventRepositoryDrizzle implements EventRepository {
-  constructor() {}
+  database: typeof db
+  constructor(database: typeof db) {
+    this.database = database
+  }
   async getByDateLatAndLong(params: {
     date: Date
     latitude: number
     longitude: number
   }): Promise<OnSiteEvent | null> {
-    const output = await db.query.eventsTable.findFirst({
+    const output = await this.database.query.eventsTable.findFirst({
       where: and(
         eq(schema.eventsTable.date, params.date),
         eq(schema.eventsTable.latitude, params.latitude.toString()),
@@ -42,7 +41,7 @@ export class EventRepositoryDrizzle implements EventRepository {
   }
 
   async create(input: OnSiteEvent) {
-    const [output] = await db
+    const [output] = await this.database
       .insert(schema.eventsTable)
       .values({
         // @ts-expect-error - Drizzle espera snake_case, mas a interface é camelCase

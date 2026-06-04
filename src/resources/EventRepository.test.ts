@@ -1,7 +1,8 @@
+import { db } from '../db/client'
 import { EventRepositoryDrizzle } from './EventRepository'
 
 describe('EventRepositoryDrizzle', () => {
-  const repository = new EventRepositoryDrizzle()
+  const repository = new EventRepositoryDrizzle(db)
 
   test('Deve criar um evento com sucesso', async () => {
     const input = {
