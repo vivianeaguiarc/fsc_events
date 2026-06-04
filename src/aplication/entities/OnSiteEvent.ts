@@ -1,5 +1,4 @@
 // Interface de domínio define quais campos um evento pode ter
-
 export interface OnSiteEvent {
   id: string
   name: string
